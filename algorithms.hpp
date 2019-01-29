@@ -11,7 +11,13 @@
 template <typename Iter, typename T>
 std::size_t count(Iter first, Iter last, const T& value)
 {
-    return 0;
+    std::size_t n = 0;
+    for (; first != last; ++first) {
+        if (*first == value) {
+            ++n;
+        }
+    }
+    return n;
 }
 
 /*
@@ -21,7 +27,12 @@ std::size_t count(Iter first, Iter last, const T& value)
 template <typename Iter, typename T>
 Iter find(Iter first, Iter last, const T& value)
 {
-    return Iter{};
+    for (; first != last; ++first) {
+        if (*first == value) {
+            return first;
+        }
+    }
+    return last;
 }
 
 /*
@@ -31,7 +42,12 @@ Iter find(Iter first, Iter last, const T& value)
 template <typename Iter, typename UnaryPredicate>
 Iter find_if(Iter first, Iter last, UnaryPredicate pred)
 {
-    return Iter{};
+    for (; first != last; ++first) {
+        if (pred(*first)) {
+            return first;
+        }
+    }
+    return last;
 }
 
 /*
@@ -41,7 +57,7 @@ Iter find_if(Iter first, Iter last, UnaryPredicate pred)
 template <typename Iter, typename UnaryPredicate>
 bool any_of(Iter first, Iter last, UnaryPredicate pred)
 {
-    return false;
+    return ::find_if(first, last, pred) != last;
 }
 
 /*
@@ -52,6 +68,9 @@ bool any_of(Iter first, Iter last, UnaryPredicate pred)
 template <typename Iter1, typename Iter2>
 Iter2 copy(Iter1 first1, Iter1 last1, Iter2 first2)
 {
+    for (; first1 != last1; ++first1, ++first2) {
+        *first2 = *first1;
+    };
     return first2;
 };
 
@@ -62,7 +81,14 @@ Iter2 copy(Iter1 first1, Iter1 last1, Iter2 first2)
 template <typename Iter1, typename Iter2>
 bool equal(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
 {
-    return false;
+    while (first1 != last1 && first2 != last2) {
+        if (*first1 != *first2) {
+            return false;
+        }
+        ++first1; ++first2;
+    }
+
+    return first1 == last1 && first2 == last2;
 }
 
 /*
@@ -74,6 +100,10 @@ Iter3 transform(Iter1 first1, Iter1 last1,
                 Iter2 first2, Iter2 last2,
                 Iter3 out_iter, Func func)
 {
+    while (first1 != last1 && first2 != last2) {
+        *out_iter = func(*first1, *first2);
+        ++first1; ++first2;
+    }
     return out_iter;
 }
 
